@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+:root {
+  font-family: "Arsenal", sans-serif;
+  font-weight: 400;
+
+  color: rgba(255, 255, 255, 0.87);
+  background: #000;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+
+  background: linear-gradient(rgba(0, 0, 0, 0.866), rgba(0, 0, 0, 0.866)),
+    url("/Background/logo2.png") center/cover no-repeat;
+
+  will-change: transform;
+  transform: translateZ(0);
+}

@@ -1,0 +1,125 @@
+SEPOLIA_RPC_URL=https://sepolia.infura.io/v3/195bf1a2f9ec411ab3da652f53fe10f6
+ETHERSCAN_API_KEY=84R8X6YD6JM5DRNWCRMXQF4RZNSSJ5QR9P
+   apiURL: "https://api.cronoscan.com/api",
+
+
+   {showSuccess && (
+                <motion.div
+                  key="success"
+                  initial={{ y: 150, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: 150, opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="relative right-3"
+                >
+                  <p className="bg-gray-800 text-white text-center px-4 py-2 rounded-lg shadow w-fit whitespace-nowrap">
+                    ✔️ Minting Success!{" "}
+                    <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href={`https://explorer.cronos.org/testnet/tx/${txHash}`}
+                      className="text-blue-500"
+                    >
+                      Tap to view transaction
+                    </a>
+                  </p>
+                </motion.div>
+              )}
+
+
+               <div className="absolute hidden md:flex justify-center bottom-16 left-1/2 -translate-x-1/2 w-full px-4 translate-y-2">
+          <div className="w-full max-w-xs">
+            <AnimatePresence mode="wait">
+              {isMinting && !isSuccess && txHash && (
+                <motion.div
+                  key="loading"
+                  initial={{ y: 150, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: 150, opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <p className="bg-gray-900 text-white text-center px-4 py-2 rounded-lg shadow w-full">
+                    <motion.span
+                      animate={{ rotate: [0, 180, 360] }}
+                      transition={{
+                        duration: 1.5,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
+                      style={{ display: "inline-block" }}
+                      className="mr-1"
+                    >
+                      ⏳
+                    </motion.span>{" "}
+                    Waiting for Confirmation...
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+
+
+              const hre = require("hardhat");
+const fs = require("fs");
+const path = require("path");
+
+async function main() {
+  const [deployer] = await hre.ethers.getSigners();
+
+  // Ambil alamat kontrak dari file deploy Ignition
+  const deploymentPath = path.resolve(__dirname, "../temp/NFT.json");
+  const deploymentData = JSON.parse(fs.readFileSync(deploymentPath, "utf-8"));
+  const contractAddress = deploymentData["contract"];
+
+  if (!contractAddress) {
+    throw new Error("Contract address not found in NFT.json");
+  }
+
+  // Attach ke contract
+  const BraveDog = await hre.ethers.getContractAt("Ninjafu", contractAddress);
+
+  // Ambil waktu sekarang (dibulatkan ke menit penuh supaya detik = 00)
+  const now = Math.floor(Date.now() / 1000);
+  const startMinute = Math.floor(now / 60) * 60;
+
+  // Freemint = 1 jam dari sekarang
+  const freemintStart = startMinute + 60 * 60;
+
+  // Whitelist = 25 Agustus 2025, jam 20:00 (Waktu lokal komputermu)
+  const whitelistDate = new Date("2025-08-25T20:00:00");
+  const whitelistStart = Math.floor(whitelistDate.getTime() / 1000);
+
+  // Public = 26 Agustus 2025, jam 21:00 (Waktu lokal komputermu)
+  const publicDate = new Date("2025-08-26T21:00:00");
+  const publicStart = Math.floor(publicDate.getTime() / 1000);
+
+  // Log human readable timestamp
+  console.log(
+    "FREEMINT START:",
+    new Date(freemintStart * 1000).toLocaleString()
+  );
+  console.log(
+    "WHITELIST START:",
+    new Date(whitelistStart * 1000).toLocaleString()
+  );
+  console.log("PUBLIC START:  ", new Date(publicStart * 1000).toLocaleString());
+
+  // Kirim transaksi untuk set waktu
+  const tx = await BraveDog.setMintTime(
+    freemintStart,
+    whitelistStart,
+    publicStart
+  );
+  await tx.wait();
+
+  console.log("✅ Mint times updated!");
+  console.log("📬 Transaction Hash:", tx.hash);
+}
+
+main()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error("❌ Error:", error);
+    process.exit(1);
+  });

@@ -1,0 +1,22 @@
+Invoke-RestMethod -Uri "https://api.netlify.com/api/v1/sites/1f4bb119-848c-4e83-bcb0-eb9149f2182c" `
+  -Method Patch `
+  -Headers @{ Authorization = "Bearer nfp_mCHBzqzmTCXj7HD4SQpWSX5WeLo2STRBe602"; "Content-Type" = "application/json" } `
+  -Body '{ "name": "ninjafu-mint" }'
+
+  // check sites
+   Invoke-RestMethod -Uri "https://api.netlify.com/api/v1/sites" `
+  -Headers @{ Authorization = "Bearer nfp_mCHBzqzmTCXj7HD4SQpWSX5WeLo2STRBe602" }
+
+
+  <div className="flex flex-col text-[16.3px] font-semibold gap-2 pt-2 pb-2 border-t border-b border-white/10">
+              <h2 className="text-left">
+                FREEMINT DATE: {formatDate(freemintStart)}
+              </h2>
+              <h2 className="text-left">
+                WHITELIST DATE: {formatDate(whitelistStart)}
+              </h2>
+              <h2 className="text-left">
+                PUBLIC DATE: {formatDate(publicStart)}
+              </h2>
+            </div>
+
